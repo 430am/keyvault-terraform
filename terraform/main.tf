@@ -1,6 +1,16 @@
+data "azurerm_key_vault" "secret_store" {
+    name = azurerm_key_vault.kv.name
+    resource_group_name = azurerm_key_vault.kv.resource_group_name
+}
+
+data "azurerm_key_vault_secret" "vm_public_key" {
+    key_vault_id = data.azurerm_key_vault.secret_store.id
+    name = azurerm_key_vault_secret.public_key.name    
+}
+
 resource "random_pet" "naming" {
     separator = ""
-    length    = 8
+    length    = 2
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -88,6 +98,6 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
     admin_ssh_key {
       username = "ladmin"
-      public_key = data.tls_public_key.ssh-vm-public.public_key_openssh
+      public_key = data.azurerm_key_vault_secret.vm_public_key.value
     }
 }

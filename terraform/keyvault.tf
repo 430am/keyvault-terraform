@@ -1,7 +1,7 @@
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "kv" {
-    name                        = "keyvault${random_pet.naming.id}"
+    name                        = "kv${random_pet.naming.id}"
     location                    = azurerm_resource_group.rg.location
     resource_group_name         = azurerm_resource_group.rg.name
     sku_name                    = "standard"
@@ -19,8 +19,16 @@ resource "azurerm_role_assignment" "kv_admin" {
     principal_id = data.azurerm_client_config.current.object_id
 }
 
-resource "azurerm_key_vault_secret" "name" {
+resource "azurerm_key_vault_secret" "private_key" {
     name         = "ssh-${random_pet.naming.id}-private-key"
-    value        = tls_private_key.ssh-vm-priv.private_key_pem
+    value_wo        = ephemeral.tls_private_key.ssh-vm-priv.private_key_pem
+    value_wo_version = "1"
     key_vault_id = azurerm_key_vault.kv.id
+}
+
+resource "azurerm_key_vault_secret" "public_key" {
+    key_vault_id = azurerm_key_vault.kv.id
+    name = "ssh-${random_pet.naming.id}-public-key"
+    value_wo = ephemeral.tls_public_key.ssh-vm-pub.public_key_pem
+    value_wo_version = "1"
 }
