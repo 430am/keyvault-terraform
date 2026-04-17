@@ -79,7 +79,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
     name = "vm-${random_pet.naming.id}"
     network_interface_ids = [ azurerm_network_interface.vm-nic.id ]
     resource_group_name = azurerm_resource_group.rg.name
-    size = "Standard_DS1_v2"
+    size = "Standard_D2als_v6"
 
     os_disk {
         name = "osdisk-${random_pet.naming.id}"

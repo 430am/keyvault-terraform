@@ -25,3 +25,6 @@ terraform.rc
 
 # lock file
 .terraform.lock.hcl
+
+# output files
+planout
